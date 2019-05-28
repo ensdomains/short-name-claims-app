@@ -7,7 +7,7 @@ import './App.css';
 const App: React.FC = () => {
   return (
     <Container maxWidth="md">
-      <h1>Hello, world</h1>
+      <h1>ENS Short Name Claim Tool</h1>
       <ClaimForm />
     </Container>
   );

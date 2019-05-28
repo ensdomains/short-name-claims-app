@@ -14,12 +14,6 @@ import { ProviderContext } from './ProviderContext';
 
 const NAME_RE = /^([^.]{3,6}\.[^.]+|[^.]{3,6}eth\.[^.]+|[^.]{1,4}\.[^.]{2}|[^.]{1,3}\.[^.]{3}|[^.]{1,2}\.[^.]{4}|[^.]{1}\.[^.]{5})$/;
 
-const networks : {[key: string]: {[key: string]: string}} = {
-  1558996169577: {
-    nameClaimAddress: '0x6eD79Aa1c71FD7BdBC515EfdA3Bd4e26394435cC',
-  }
-};
-
 const styles = (theme: Theme) =>
   createStyles({
     textField: {
@@ -29,6 +23,12 @@ const styles = (theme: Theme) =>
     },
     button: {
       margin: theme.spacing(1),
+    },
+    root: {
+      padding: theme.spacing(1),
+    },
+    progress: {
+      margin: theme.spacing(2),
     },
   });
 
@@ -45,7 +45,7 @@ interface State {
 }
 
 interface Props extends WithStyles<typeof styles> {
-
+  address: string;
 }
 
 class ClaimForm extends React.Component<Props, State> {
@@ -65,8 +65,7 @@ class ClaimForm extends React.Component<Props, State> {
 
   async componentDidMount() {
     this.prover = new DnsProver(this.context.provider._web3Provider);
-    const network = await this.context.provider.getNetwork()
-    this.claimer = new ethers.Contract(networks[network.chainId].nameClaimAddress, nameClaimsABI, this.context.provider.getSigner());
+    this.claimer = new ethers.Contract(this.props.address, nameClaimsABI, this.context.provider.getSigner());
   }
 
   handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,12 +80,27 @@ class ClaimForm extends React.Component<Props, State> {
     if(!this.prover || !this.claimer) return;
     this.setState({ status: Status.Loading });
 
-    const result = await this.prover.lookup("TXT", "_ens." + this.state.name);
+    try {
+      const result = await this.prover.lookup("TXT", "_ens." + this.state.name);
 
-    this.setState({
-      status: Status.Loaded,
-      result: result,
-    });
+      this.setState({
+        status: Status.Loaded,
+        result: result,
+      });
+    } catch(e) {
+      if(typeof e !== "string" || !e.endsWith("NOT SUPPORTED")) {
+        throw(e);
+      }
+      this.setState({
+        status: Status.Loaded,
+        result: {
+          found: false,
+          nsec: false,
+          results: [],
+          proofs: [],
+        },
+      });
+    }
   }
 
   handleClear = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -101,7 +115,7 @@ class ClaimForm extends React.Component<Props, State> {
     const { name, status, result } = this.state;
 
     return (
-      <Grid container spacing={3}>
+      <Grid container spacing={3} className={classes.root}>
         <Grid item xs={9}>
           <TextField
             autoFocus={true}
@@ -127,7 +141,7 @@ class ClaimForm extends React.Component<Props, State> {
             onClick={this.handleClear}
           >Clear</Button>
         </Grid>
-        {status === Status.Loading && <Grid item xs={12}><CircularProgress /></Grid>}
+        {status === Status.Loading && <Grid item xs={12}><CircularProgress className={classes.progress} /></Grid>}
         {status === Status.Loaded && result && this.claimer && <DNSProofInfo name={name} claimer={this.claimer} result={result} />}
       </Grid>
     );

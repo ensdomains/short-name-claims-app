@@ -10,6 +10,9 @@ import './App.css';
 import { ProviderContext } from './ProviderContext';
 
 const networks : {[key: string]: {[key: string]: string}} = {
+  3: { // Ropsten
+    nameClaimAddress: '0xd5be10a138550bd8b53b986af2e45901f377e2bb',
+  },
   5: { // Goerli
     nameClaimAddress: '0x4ef2aadfda4f0e1f54752953f5f90010ac9e6e40',
   },

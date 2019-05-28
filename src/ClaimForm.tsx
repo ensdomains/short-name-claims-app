@@ -88,6 +88,7 @@ class ClaimForm extends React.Component<Props, State> {
         result: result,
       });
     } catch(e) {
+      console.log(e);
       if(typeof e !== "string" || !e.endsWith("NOT SUPPORTED")) {
         throw(e);
       }

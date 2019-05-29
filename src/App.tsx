@@ -13,16 +13,19 @@ import ClaimsList from './ClaimsList';
 import './App.css';
 import { ProviderContext } from './ProviderContext';
 
-const networks : {[key: string]: {[key: string]: string}} = {
+const networks : {[key: string]: {nameClaimAddress: string, graphql?: string, etherscan: string}} = {
   3: { // Ropsten
     nameClaimAddress: '0xd5be10a138550bd8b53b986af2e45901f377e2bb',
     graphql: 'https://api.thegraph.com/subgraphs/name/ensdomains/shortnameclaims',
+    etherscan: 'https://ropsten.etherscan.io/address/',
   },
   5: { // Goerli
     nameClaimAddress: '0x4ef2aadfda4f0e1f54752953f5f90010ac9e6e40',
+    etherscan: 'https://goerli.etherscan.io/address/',
   },
   1558996169577: {
     nameClaimAddress: '0x6eD79Aa1c71FD7BdBC515EfdA3Bd4e26394435cC',
+    etherscan: '',
   },
 };
 
@@ -97,7 +100,7 @@ class App extends React.Component<Props, State> {
 
         {client && <Paper className={classes.paper}>
           <h2>Claims</h2>
-          <ApolloProvider client={client}><ClaimsList address={networkInfo.nameClaimAddress} /></ApolloProvider>
+          <ApolloProvider client={client}><ClaimsList address={networkInfo.nameClaimAddress} exploreUrl={networkInfo.etherscan} /></ApolloProvider>
         </Paper>}
       </Container>
     );

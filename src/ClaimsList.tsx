@@ -2,6 +2,7 @@ import { Query, QueryResult } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Link from '@material-ui/core/Link';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -24,6 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {
   address: string;
+  exploreUrl: string;
 }
 
 const query = gql`
@@ -41,6 +43,7 @@ const query = gql`
 
 export const ClaimsList: React.FC<Props> = (props) => {
   const classes = useStyles();
+  const { exploreUrl } = props;
 
   return (
     <Query query={query}>
@@ -64,7 +67,7 @@ export const ClaimsList: React.FC<Props> = (props) => {
                   <TableCell>{claim.name}.eth</TableCell>
                   <TableCell>{claim.dnsName}</TableCell>
                   <TableCell>{new Date(claim.submittedAt * 1000).toLocaleDateString()}</TableCell>
-                  <TableCell>{claim.owner}</TableCell>
+                  <TableCell><Link href={exploreUrl + claim.owner}>{claim.owner.slice(0, 6) + '…' + claim.owner.slice(38)}</Link></TableCell>
                 </TableRow>
               ))}
             </TableBody>

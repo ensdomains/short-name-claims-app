@@ -24,9 +24,6 @@ const styles = (theme: Theme) =>
     button: {
       margin: theme.spacing(1),
     },
-    root: {
-      padding: theme.spacing(1),
-    },
     progress: {
       margin: theme.spacing(2),
     },
@@ -116,7 +113,7 @@ class ClaimForm extends React.Component<Props, State> {
     const { name, status, result } = this.state;
 
     return (
-      <Grid container spacing={3} className={classes.root}>
+      <Grid container spacing={3}>
         <Grid item xs={9}>
           <TextField
             autoFocus={true}

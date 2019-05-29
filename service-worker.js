@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/short-name-claims-app/precache-manifest.615c1f110fe3a03889fb09c43c00c514.js"
+  "/short-name-claims-app/precache-manifest.14f06a4e7a0c2a8bd5610d96e349b364.js"
 );
 
 self.addEventListener('message', (event) => {

@@ -117,7 +117,7 @@ class ClaimForm extends React.Component<Props, State> {
         <Grid item xs={9}>
           <TextField
             autoFocus={true}
-            label="Name to claim"
+            label="DNS domain"
             className={classes.textField}
             value={name}
             onKeyPress={(ev) => (ev.key === 'Enter' && this.doCheck())}

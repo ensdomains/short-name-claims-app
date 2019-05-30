@@ -24,6 +24,7 @@ const styles = (theme: Theme) =>
     },
     button: {
       margin: theme.spacing(1),
+      width: "40%",
     },
     progress: {
       margin: theme.spacing(2),

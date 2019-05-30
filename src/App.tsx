@@ -31,9 +31,16 @@ const styles = (theme: Theme) =>
     root: {
     },
     paper: {
-      margin: theme.spacing(1),
       marginBottom: theme.spacing(3),
-      padding: theme.spacing(1),
+      padding: theme.spacing(3),
+      '& p': {
+        fontSize: '14pt',
+        lineHeight: '1.5em',
+      },
+      '& li': {
+        fontSize: '14pt',
+        lineHeight: '1.5em',
+      },
     },
     h2: {
       marginTop: 0,

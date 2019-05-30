@@ -129,7 +129,6 @@ class App extends React.Component<Props, State> {
           <ol>
             <li>Must be a DNS second-level domain (2LD)</li>
             <li>Must have been registered on or before January 1, 2019.</li>
-            <li>Must have DNSSEC enabled, using the algorithm RSASHA256, RSASHA1 or P256SHA256.</li>
             <li>Must have whois information available that includes the domain's initial registration date.</li>
           </ol>
           <p>
@@ -161,10 +160,6 @@ class App extends React.Component<Props, State> {
 
           <h3>Submission Process</h3>
           <ol>
-            <li>Enable DNSSEC on your domain. See your DNS provider or registrar's
-            documentation for guidance. If offered a choice of algorithms, RSASHA256
-            will offer substantial transaction cost savings over the other two
-            supported algorithms, RSASHA1 and P256SHA256.</li>
             <li>Publish a TXT record on the '_ens' subdomain
             (eg, _ens.yourdomain.tld). The TXT record must be in the format
             'a=0x...'. The address provided in this TXT record is the address of

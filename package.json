@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ensdomains/dnsprovejs": "^0.1.4",
-    "@ensdomains/ethregistrar": "^1.2.3",
+    "@ensdomains/ethregistrar": "^1.2.5",
     "@material-ui/core": "^4.0.0",
     "@material-ui/icons": "^4.0.0",
     "@types/jest": "24.0.13",
@@ -12,6 +11,7 @@
     "@types/react": "16.8.18",
     "@types/react-dom": "16.8.4",
     "apollo-boost": "^0.4.0",
+    "dns-packet": "^5.2.1",
     "ethers": "^4.0.28",
     "gh-pages": "^2.0.1",
     "graphql": "^14.3.1",

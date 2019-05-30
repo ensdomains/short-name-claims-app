@@ -12,12 +12,12 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Snackbar from '@material-ui/core/Snackbar';
 import CheckIcon from '@material-ui/icons/Check';
 import CloseIcon from '@material-ui/icons/Close';
+import { Packet } from 'dns-packet';
 import { createStyles, Theme, WithStyles, withStyles } from '@material-ui/core/styles';
-import DnsProver, { Result } from '@ensdomains/dnsprovejs';
 import { abi as priceOracleABI } from '@ensdomains/ethregistrar/build/contracts/PriceOracle.json';
 import { ProviderContext } from './ProviderContext';
 
-const ADDRESS_TXT_RE = /^a=0x[0-9a-fA-F]{40}$/;
+const ADDRESS_TXT_RE = /^a=(0x[0-9a-fA-F]{40})$/;
 
 const claimTypes = [
   {
@@ -59,7 +59,7 @@ const styles = (theme: Theme) =>
 interface Props extends WithStyles<typeof styles> {
   name: string;
   claimer: ethers.Contract;
-  result: Result;
+  result: Packet;
 }
 
 interface ClaimData {
@@ -75,8 +75,6 @@ interface State {
 }
 
 class DNSProofInfo extends React.Component<Props, State> {
-  //oracle?: Oracle;
-
   static contextType = ProviderContext;
 
   constructor(props: Props) {
@@ -87,6 +85,19 @@ class DNSProofInfo extends React.Component<Props, State> {
 
   async componentDidMount() {
     await this.fetchClaims();
+  }
+
+  getClaimantAddress = () => {
+    for(let rr of this.props.result.answers) {
+      if(rr.type !== 'TXT') continue;
+      for(let data of rr.data) {
+        const match = data.toString().match(ADDRESS_TXT_RE);
+        if(match) {
+          return match[1];
+        }
+      }
+    }
+    return null;
   }
 
   fetchClaims = async () => {
@@ -123,14 +134,13 @@ class DNSProofInfo extends React.Component<Props, State> {
     // Trigger ethereum.enable
     await this.context.account();
 
-    const { claimer, name, result } = this.props;
-    const prover = new DnsProver(this.context.provider._web3Provider);
-    const oracle = prover.getOracle(await claimer.oracle());
-    const [ data, witness ] = await oracle.getAllProofs(result);
+    const { claimer, name } = this.props;
+    const writeClaimer = claimer.connect(this.context.provider.getSigner());
 
     const dnsName = "0x" + packet.name.encode(name).toString('hex');
+    const claimant = this.getClaimantAddress();
     const cost = claim.cost.add(claim.cost.div(10));
-    const tx = await claimer[claim.method](dnsName, data, witness, {value: cost});
+    const tx = await writeClaimer[claim.method](dnsName, claimant, {value: cost});
     const shortTxHash = tx.hash.slice(0, 6) + "…" + tx.hash.slice(62);
     this.setState({
       message: "Transaction " + shortTxHash + " submitted",
@@ -152,28 +162,21 @@ class DNSProofInfo extends React.Component<Props, State> {
     const { name, result, classes } = this.props;
     const { claims, message } = this.state;
 
+    let found = result.rcode === 'NOERROR' && result.answers.length > 0;
     let match = false;
-    if(result.found) {
-      const rrs = result.results[result.results.length - 1].rrs;
-      match = rrs.some((rr) => (rr.type === "TXT" && rr.data.some((txt) => ADDRESS_TXT_RE.test(txt))));
+    if(found) {
+      match = this.getClaimantAddress() != null;
     }
 
     return (
       <>
         <List component="ul">
           <ListItem>
-            {result.found || result.nsec
+            {found
               ?<ListItemIcon><CheckIcon/></ListItemIcon>
               :<ListItemIcon><CloseIcon/></ListItemIcon>
             }
-            <ListItemText primary="DNSSEC enabled" secondary={!result.found && !result.nsec?"Your domain must be DNSSEC-enabled, using a supported algorithm. See this page for details.":''} />
-          </ListItem>
-          <ListItem>
-            {result.found
-              ?<ListItemIcon><CheckIcon/></ListItemIcon>
-              :<ListItemIcon><CloseIcon/></ListItemIcon>
-            }
-            <ListItemText primary={"Text record on _ens." + name} secondary={!result.found?"You must publish a TXT record on _ens." + name + ", in the format 'a=0x...', specifying the address you want to own the ENS name.":''}/>
+            <ListItemText primary={"Text record on _ens." + name} secondary={!found?"You must publish a TXT record on _ens." + name + ", in the format 'a=0x...', specifying the address you want to own the ENS name.":''}/>
           </ListItem>
           <ListItem>
             {match
@@ -188,7 +191,7 @@ class DNSProofInfo extends React.Component<Props, State> {
               <ListItemIcon>{claim.submitted?<CheckIcon/>:<CloseIcon/>}</ListItemIcon>
               <ListItemText>
                 Claimed {claim.claimed}.eth for {ethers.utils.formatEther(claim.cost)} ETH
-                {claim.submitted?'':<Button variant="contained" color="primary" className={classes.button} onClick={this.claimName(claim)} disabled={!result.found}>Claim</Button>}
+                {claim.submitted?'':<Button variant="contained" color="primary" className={classes.button} onClick={this.claimName(claim)} disabled={!match}>Claim</Button>}
               </ListItemText>
             </ListItem>
           ))}

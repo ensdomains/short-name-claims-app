@@ -1,4 +1,4 @@
-/// <reference path="ensdomains__dnsprovejs.d.ts" />
+/// <reference path="dns-packet.d.ts" />
 import { ethers } from 'ethers';
 import React from 'react';
 import Button from '@material-ui/core/Button';
@@ -6,13 +6,14 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
-import DnsProver, { Result } from '@ensdomains/dnsprovejs';
+import { encode as encodePacket, decode as decodePacket, Packet, RECURSION_DESIRED } from 'dns-packet';
 import { abi as nameClaimsABI } from '@ensdomains/ethregistrar/build/contracts/ShortNameClaims.json';
 
 import DNSProofInfo from './DNSProofInfo';
 import { ProviderContext } from './ProviderContext';
 
 const NAME_RE = /^([^.]{3,6}\.[^.]+|[^.]{3,6}eth\.[^.]+|[^.]{1,4}\.[^.]{2}|[^.]{1,3}\.[^.]{3}|[^.]{1,2}\.[^.]{4}|[^.]{1}\.[^.]{5})$/;
+const DNS_URL = 'https://cloudflare-dns.com/dns-query?ct=application/dns-udpwireformat&dns=';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -29,6 +30,31 @@ const styles = (theme: Theme) =>
     },
   });
 
+async function dnsQuery(qtype: string, name: string): Promise<Packet> {
+  let q = {
+    type: 'query',
+    id: Date.now() % 65536,
+    flags: RECURSION_DESIRED,
+    questions: [
+      {
+        type: qtype,
+        class: 'IN',
+        name: name,
+      },
+    ],
+    answers: [],
+    authorities: [],
+    additionals: [],
+  };
+  return await getDNS(q);
+}
+
+async function getDNS(query: Packet): Promise<Packet> {
+  let response = await fetch(DNS_URL + encodePacket(query).toString('base64'));
+  let decoded = decodePacket(new Buffer(await response.arrayBuffer()));
+  return decoded;
+}
+
 enum Status {
   Initial = 1,
   Loading,
@@ -38,7 +64,7 @@ enum Status {
 interface State {
   status: Status;
   name: string;
-  result?: Result;
+  result?: Packet;
 }
 
 interface Props extends WithStyles<typeof styles> {
@@ -46,7 +72,6 @@ interface Props extends WithStyles<typeof styles> {
 }
 
 class ClaimForm extends React.Component<Props, State> {
-  prover?: DnsProver;
   claimer?: ethers.Contract;
 
   static contextType = ProviderContext;
@@ -61,8 +86,7 @@ class ClaimForm extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
-    this.prover = new DnsProver(this.context.provider._web3Provider);
-    this.claimer = new ethers.Contract(this.props.address, nameClaimsABI, this.context.provider.getSigner());
+    this.claimer = new ethers.Contract(this.props.address, nameClaimsABI, this.context.provider);
   }
 
   handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,31 +98,15 @@ class ClaimForm extends React.Component<Props, State> {
   }
 
   doCheck = async () => {
-    if(!this.prover || !this.claimer) return;
+    if(!this.claimer) return;
     this.setState({ status: Status.Loading });
 
-    try {
-      const result = await this.prover.lookup("TXT", "_ens." + this.state.name);
+    const result = await dnsQuery("TXT", "_ens." + this.state.name);
 
-      this.setState({
-        status: Status.Loaded,
-        result: result,
-      });
-    } catch(e) {
-      console.log(e);
-      if(typeof e !== "string" || !e.endsWith("NOT SUPPORTED")) {
-        throw(e);
-      }
-      this.setState({
-        status: Status.Loaded,
-        result: {
-          found: false,
-          nsec: false,
-          results: [],
-          proofs: [],
-        },
-      });
-    }
+    this.setState({
+      status: Status.Loaded,
+      result: result,
+    });
   }
 
   handleClear = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

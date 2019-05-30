@@ -20,12 +20,8 @@ const networks : {[key: string]: {nameClaimAddress: string, graphql?: string, et
     graphql: 'https://api.thegraph.com/subgraphs/name/ensdomains/shortnameclaims',
     etherscan: 'https://ropsten.etherscan.io/address/',
   },
-  5: { // Goerli
-    nameClaimAddress: '0x4ef2aadfda4f0e1f54752953f5f90010ac9e6e40',
-    etherscan: 'https://goerli.etherscan.io/address/',
-  },
   1558996169577: {
-    nameClaimAddress: '0x6eD79Aa1c71FD7BdBC515EfdA3Bd4e26394435cC',
+    nameClaimAddress: '0xe982E462b094850F12AF94d21D470e21bE9D0E9C',
     etherscan: '',
   },
 };

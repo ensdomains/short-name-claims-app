@@ -16,7 +16,7 @@ import { ProviderContext } from './ProviderContext';
 
 const networks : {[key: string]: {nameClaimAddress: string, graphql?: string, etherscan: string}} = {
   3: { // Ropsten
-    nameClaimAddress: '0xd5be10a138550bd8b53b986af2e45901f377e2bb',
+    nameClaimAddress: '0x0b74a518f10d6daf90c0c1aeabec2ffe851ccfa5',
     graphql: 'https://api.thegraph.com/subgraphs/name/ensdomains/shortnameclaims',
     etherscan: 'https://ropsten.etherscan.io/address/',
   },

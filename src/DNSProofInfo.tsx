@@ -106,6 +106,8 @@ class DNSProofInfo extends React.Component<Props, State> {
     const priceOracleAddress = await claimer.priceOracle();
     const priceOracle = new ethers.Contract(priceOracleAddress, priceOracleABI, this.context.provider);
     const registrationPeriod = await claimer.REGISTRATION_PERIOD();
+    const claimant = this.getClaimantAddress();
+    const dnsName = "0x" + packet.name.encode(name).toString('hex');
 
     const claims = (await Promise.all(claimTypes.map(async (ct) => {
       const matches = name.match(ct.re);
@@ -114,8 +116,7 @@ class DNSProofInfo extends React.Component<Props, State> {
       const claimed = matches.slice(1).join('');
       const cost = bigNumberify(await priceOracle.price(claimed, 0, registrationPeriod));
 
-      const dnsName = "0x" + packet.name.encode(name).toString('hex');
-      const claimId = await claimer.computeClaimId(claimed, dnsName);
+      const claimId = await claimer.computeClaimId(claimed, dnsName, claimant);
       const claimInfo = await claimer.claims(claimId);
 
       return {

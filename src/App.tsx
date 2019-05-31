@@ -102,7 +102,6 @@ class App extends React.Component<Props, State> {
         <h1>ENS Short Name Claim Tool</h1>
 
         {client && <Paper className={classes.paper}>
-          <h2 className={classes.h2}>Claims</h2>
           <ApolloProvider client={client}><ClaimsList address={networkInfo.nameClaimAddress} exploreUrl={networkInfo.etherscan} /></ApolloProvider>
         </Paper>}
 

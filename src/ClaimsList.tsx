@@ -100,7 +100,7 @@ export const ClaimsList: React.FC<Props> = (props) => {
   const classes = useStyles();
   const { exploreUrl } = props;
 
-  const [ page, setPage ] = React.useState(0);
+  const [ skip, setSkip ] = React.useState(0);
   const [ limit, setLimit ] = React.useState(2);
   const [ nextSearch, setNextSearch ] = React.useState('');
   let [ search, setSearch ] = React.useState('');
@@ -130,7 +130,7 @@ export const ClaimsList: React.FC<Props> = (props) => {
         />
       </div>
     </Toolbar>
-    <Query query={query} variables={{ search, limit, skip: page * limit }}>
+    <Query query={query} variables={{ search, limit, skip: skip }}>
       {(result:QueryResult) => {
         if(result.loading) return <CircularProgress />;
         if(result.error) return <div>Error loading list of claims.</div>;
@@ -159,9 +159,9 @@ export const ClaimsList: React.FC<Props> = (props) => {
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 rowsPerPage={limit}
-                page={page}
-                count={result.data.claims.length===limit ? (page+1)*limit+1 : page*limit+result.data.claims.length}
-                onChangePage={(e: any, page: number) => setPage(page)}
+                page={skip / limit}
+                count={result.data.claims.length===limit ? skip+limit+1 : skip+result.data.claims.length}
+                onChangePage={(e: any, page: number) => setSkip(Math.max(limit * page, 0))}
                 onChangeRowsPerPage={(e: React.ChangeEvent<HTMLInputElement>) => setLimit(parseInt(e.target.value))}
               />
             </TableFooter>

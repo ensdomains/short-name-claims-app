@@ -101,7 +101,7 @@ export const ClaimsList: React.FC<Props> = (props) => {
   const { exploreUrl } = props;
 
   const [ skip, setSkip ] = React.useState(0);
-  const [ limit, setLimit ] = React.useState(2);
+  const [ limit, setLimit ] = React.useState(5);
   const [ nextSearch, setNextSearch ] = React.useState('');
   let [ search, setSearch ] = React.useState('');
   setSearch = debounce(setSearch, 500);

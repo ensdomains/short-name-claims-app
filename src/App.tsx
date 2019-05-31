@@ -155,11 +155,6 @@ class App extends React.Component<Props, State> {
             application is unsuccessful, the fee will be returned to the claimant.
           </p>
           <p>
-            In the event that multiple claims are submitted for the same ENS
-            name, the name will be issued to the claimant whose DNS domain was
-            registered the earliest, based on available whois data.
-          </p>
-          <p>
             All claims are decided based on the sole discretion of the ENS team.
             Decisions are final.
           </p>

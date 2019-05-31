@@ -8,7 +8,9 @@ import Link from '@material-ui/core/Link';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import TableFooter from '@material-ui/core/TableFooter';
 import TableHead from '@material-ui/core/TableHead';
+import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -82,8 +84,8 @@ interface Props {
 }
 
 const query = gql`
-  query Claims($search: String) {
-    claims(orderBy: name, where: {name_starts_with: $search}) {
+  query Claims($search: String, $skip: Int, $limit: Int) {
+    claims(first: $limit, skip: $skip, orderBy: name, where: {name_starts_with: $search}) {
       id
       name
       dnsName
@@ -98,6 +100,8 @@ export const ClaimsList: React.FC<Props> = (props) => {
   const classes = useStyles();
   const { exploreUrl } = props;
 
+  const [ page, setPage ] = React.useState(0);
+  const [ limit, setLimit ] = React.useState(2);
   const [ nextSearch, setNextSearch ] = React.useState('');
   let [ search, setSearch ] = React.useState('');
   setSearch = debounce(setSearch, 500);
@@ -126,12 +130,12 @@ export const ClaimsList: React.FC<Props> = (props) => {
         />
       </div>
     </Toolbar>
-    <Query query={query} variables={{ search }}>
+    <Query query={query} variables={{ search, limit, skip: page * limit }}>
       {(result:QueryResult) => {
         if(result.loading) return <CircularProgress />;
         if(result.error) return <div>Error loading list of claims.</div>;
 
-        return (
+        return <>
           <Table className={classes.table}>
             <TableHead>
               <TableRow>
@@ -151,8 +155,18 @@ export const ClaimsList: React.FC<Props> = (props) => {
                 </TableRow>
               ))}
             </TableBody>
+            <TableFooter>
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25, 50]}
+                rowsPerPage={limit}
+                page={page}
+                count={result.data.claims.length===limit ? (page+1)*limit+1 : page*limit+result.data.claims.length}
+                onChangePage={(e: any, page: number) => setPage(page)}
+                onChangeRowsPerPage={(e: React.ChangeEvent<HTMLInputElement>) => setLimit(parseInt(e.target.value))}
+              />
+            </TableFooter>
           </Table>
-        )
+        </>
       }}
     </Query>
   </>

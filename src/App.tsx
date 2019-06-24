@@ -16,7 +16,7 @@ import { ProviderContext } from './ProviderContext';
 
 const networks : {[key: string]: {nameClaimAddress: string, graphql?: string, etherscan: string}} = {
   3: { // Ropsten
-    nameClaimAddress: '0x0b74a518f10d6daf90c0c1aeabec2ffe851ccfa5',
+    nameClaimAddress: '0x178dc714ac0121577d025a0cf4dcd396f4f08ec3',
     graphql: 'https://api.thegraph.com/subgraphs/name/ensdomains/shortnameclaims',
     etherscan: 'https://ropsten.etherscan.io/address/',
   },
@@ -101,9 +101,11 @@ class App extends React.Component<Props, State> {
       <Container maxWidth="md" className={classes.root}>
         <h1>ENS Short Name Claim Tool</h1>
 
-        {client && <Paper className={classes.paper}>
-          <ApolloProvider client={client}><ClaimsList address={networkInfo.nameClaimAddress} exploreUrl={networkInfo.etherscan} /></ApolloProvider>
-        </Paper>}
+        {client && <ApolloProvider client={client}>
+          <Paper className={classes.paper}>
+            <ClaimsList title="All Claims" address={networkInfo.nameClaimAddress} exploreUrl={networkInfo.etherscan} />
+          </Paper>
+        </ApolloProvider>}
 
         <Paper className={classes.paper}>
           <h2 className={classes.h2}>Submit a claim</h2>

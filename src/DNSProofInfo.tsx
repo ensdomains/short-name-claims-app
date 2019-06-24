@@ -58,6 +58,7 @@ const styles = (theme: Theme) =>
 
 interface Props extends WithStyles<typeof styles> {
   name: string;
+  email: string;
   claimer: ethers.Contract;
   result: Packet;
 }
@@ -101,7 +102,7 @@ class DNSProofInfo extends React.Component<Props, State> {
   }
 
   fetchClaims = async () => {
-    const { claimer, name } = this.props;
+    const { claimer, name, email } = this.props;
 
     const priceOracleAddress = await claimer.priceOracle();
     const priceOracle = new ethers.Contract(priceOracleAddress, priceOracleABI, this.context.provider);
@@ -116,7 +117,7 @@ class DNSProofInfo extends React.Component<Props, State> {
       const claimed = matches.slice(1).join('');
       const cost = bigNumberify(await priceOracle.price(claimed, 0, registrationPeriod));
 
-      const claimId = await claimer.computeClaimId(claimed, dnsName, claimant);
+      const claimId = await claimer.computeClaimId(claimed, dnsName, claimant, email);
       const claimInfo = await claimer.claims(claimId);
 
       return {
@@ -135,13 +136,13 @@ class DNSProofInfo extends React.Component<Props, State> {
     // Trigger ethereum.enable
     await this.context.account();
 
-    const { claimer, name } = this.props;
+    const { claimer, name, email } = this.props;
     const writeClaimer = claimer.connect(this.context.provider.getSigner());
 
     const dnsName = "0x" + packet.name.encode(name).toString('hex');
     const claimant = this.getClaimantAddress();
     const cost = claim.cost.add(claim.cost.div(10));
-    const tx = await writeClaimer[claim.method](dnsName, claimant, {value: cost});
+    const tx = await writeClaimer[claim.method](dnsName, claimant, email, {value: cost});
     const shortTxHash = tx.hash.slice(0, 6) + "…" + tx.hash.slice(62);
     this.setState({
       message: "Transaction " + shortTxHash + " submitted",

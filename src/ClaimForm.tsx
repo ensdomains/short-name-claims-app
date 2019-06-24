@@ -13,6 +13,7 @@ import DNSProofInfo from './DNSProofInfo';
 import { ProviderContext } from './ProviderContext';
 
 const NAME_RE = /^([^.]{3,6}\.[^.]+|[^.]{3,6}eth\.[^.]+|[^.]{1,4}\.[^.]{2}|[^.]{1,3}\.[^.]{3}|[^.]{1,2}\.[^.]{4}|[^.]{1}\.[^.]{5})$/;
+const EMAIL_RE = /^[^@]+@[^.]+\..+$/;
 const DNS_URL = 'https://cloudflare-dns.com/dns-query?ct=application/dns-udpwireformat&dns=';
 
 const styles = (theme: Theme) =>
@@ -65,6 +66,7 @@ enum Status {
 interface State {
   status: Status;
   name: string;
+  email: string;
   result?: Packet;
 }
 
@@ -82,6 +84,7 @@ class ClaimForm extends React.Component<Props, State> {
 
     this.state = {
       name: '',
+      email: '',
       status: Status.Initial,
     }
   }
@@ -91,7 +94,11 @@ class ClaimForm extends React.Component<Props, State> {
   }
 
   handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ name: event.target.value, status: Status.Initial });
+    if(event.target.id === 'email') {
+      this.setState({ email: event.target.value, status: Status.Initial });
+    } else if(event.target.id === 'name') {
+      this.setState({ name: event.target.value, status: Status.Initial });
+    }
   }
 
   handleCheck = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -119,27 +126,37 @@ class ClaimForm extends React.Component<Props, State> {
 
   render() {
     const { classes } = this.props;
-    const { name, status, result } = this.state;
+    const { name, email, status, result } = this.state;
 
     return (
       <Grid container spacing={3}>
-        <Grid item xs={9}>
+        <Grid item xs={4}>
           <TextField
             autoFocus={true}
             label="DNS domain"
             className={classes.textField}
             value={name}
-            onKeyPress={(ev) => (ev.key === 'Enter' && this.doCheck())}
             onChange={this.handleChange}
+            id="name"
           />
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
+          <TextField
+            label="Email Address"
+            className={classes.textField}
+            value={email}
+            onKeyPress={(ev) => (ev.key === 'Enter' && this.doCheck())}
+            onChange={this.handleChange}
+            id="email"
+          />
+        </Grid>
+        <Grid item xs={4}>
           <Button
             variant="contained"
             color="primary"
             className={classes.button}
             onClick={this.handleCheck}
-            disabled={!NAME_RE.test(name)}
+            disabled={!NAME_RE.test(name) || !EMAIL_RE.test(email)}
           >Check</Button>
           <Button
             variant="contained"
@@ -149,7 +166,7 @@ class ClaimForm extends React.Component<Props, State> {
           >Clear</Button>
         </Grid>
         {status === Status.Loading && <Grid item xs={12}><CircularProgress className={classes.progress} /></Grid>}
-        {status === Status.Loaded && result && this.claimer && <DNSProofInfo name={name} claimer={this.claimer} result={result} />}
+        {status === Status.Loaded && result && this.claimer && <DNSProofInfo name={name} email={email} claimer={this.claimer} result={result} />}
       </Grid>
     );
   }

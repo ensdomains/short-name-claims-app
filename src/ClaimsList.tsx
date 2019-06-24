@@ -18,6 +18,8 @@ import { fade } from '@material-ui/core/styles/colorManipulator';
 import SearchIcon from '@material-ui/icons/Search';
 import React from 'react';
 
+const ADDRESS_RE = /^0x[0-9a-fA-F]{40}$/;
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -81,24 +83,30 @@ const useStyles = makeStyles((theme: Theme) =>
 interface Props {
   address: string;
   exploreUrl: string;
+  title: string;
 }
 
 const query = gql`
-  query Claims($search: String, $skip: Int, $limit: Int) {
-    claims(first: $limit, skip: $skip, orderBy: name, where: {name_starts_with: $search}) {
+  query Claims($filter: Claim_filter, $skip: Int, $limit: Int) {
+    claims(first: $limit, skip: $skip, orderBy: name, where: $filter) {
       id
       name
       dnsName
       owner
-      approved
+      status
       submittedAt
     }
   }
 `;
 
+interface Claims_filter {
+  name_starts_with?: string;
+  owner?: string;
+}
+
 export const ClaimsList: React.FC<Props> = (props) => {
   const classes = useStyles();
-  const { exploreUrl } = props;
+  const { exploreUrl, title } = props;
 
   const [ skip, setSkip ] = React.useState(0);
   const [ limit, setLimit ] = React.useState(5);
@@ -111,9 +119,16 @@ export const ClaimsList: React.FC<Props> = (props) => {
     setSearch(e.target.value);
   }
 
+  let filter: Claims_filter = {};
+  if(ADDRESS_RE.test(search)) {
+    filter.owner = search;
+  } else {
+    filter.name_starts_with = search;
+  }
+
   return <>
     <Toolbar className={classes.toolbar}>
-      <Typography variant="h6" className={classes.title}>Claims</Typography>
+      <Typography variant="h6" className={classes.title}>{title}</Typography>
       <div className={classes.spacer} />
       <div className={classes.search}>
         <div className={classes.searchIcon}>
@@ -130,7 +145,7 @@ export const ClaimsList: React.FC<Props> = (props) => {
         />
       </div>
     </Toolbar>
-    <Query query={query} variables={{ search, limit, skip: skip }}>
+    <Query query={query} variables={{ filter: filter, limit, skip: skip }}>
       {(result:QueryResult) => {
         if(result.loading) return <CircularProgress />;
         if(result.error) return <div>Error loading list of claims.</div>;
@@ -143,6 +158,7 @@ export const ClaimsList: React.FC<Props> = (props) => {
                 <TableCell>DNS Domain</TableCell>
                 <TableCell>Submitted</TableCell>
                 <TableCell>Account</TableCell>
+                <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -152,6 +168,7 @@ export const ClaimsList: React.FC<Props> = (props) => {
                   <TableCell>{claim.dnsName}</TableCell>
                   <TableCell>{new Date(claim.submittedAt * 1000).toLocaleDateString()}</TableCell>
                   <TableCell><Link href={exploreUrl + claim.owner}>{claim.owner.slice(0, 6) + '…' + claim.owner.slice(38)}</Link></TableCell>
+                  <TableCell>{claim.status}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -163,7 +163,7 @@ export const ClaimsList: React.FC<Props> = (props) => {
             </TableHead>
             <TableBody>
               {result.data.claims.map((claim:any) => (
-                <TableRow key="{claim.name}:{claim.dnsName}:{claim.owner}">
+                <TableRow key={claim.name + ":" + claim.dnsName + ":" + claim.owner}>
                   <TableCell>{claim.name}.eth</TableCell>
                   <TableCell>{claim.dnsName}</TableCell>
                   <TableCell>{new Date(claim.submittedAt * 1000).toLocaleDateString()}</TableCell>

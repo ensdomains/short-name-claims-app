@@ -110,9 +110,12 @@ const query = gql`
   }
 `;
 
+const statuses = ['PENDING', 'APPROVED', 'DECLINED', 'WITHDRAWN'];
+
 interface Claims_filter {
   name_starts_with?: string;
   owner?: string;
+  status?: string;
 }
 
 interface Claim {
@@ -153,6 +156,8 @@ export const ClaimsList: React.FC<Props> = (props) => {
   let filter: Claims_filter = {};
   if(ADDRESS_RE.test(search)) {
     filter.owner = search;
+  } else if(statuses.includes(search.toUpperCase())) {
+    filter.status = search.toUpperCase();
   } else {
     filter.name_starts_with = search;
   }

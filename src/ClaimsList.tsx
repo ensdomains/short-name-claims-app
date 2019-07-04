@@ -92,6 +92,7 @@ const query = gql`
       id
       name
       dnsName
+      email
       owner
       status
       submittedAt
@@ -110,6 +111,7 @@ export const ClaimsList: React.FC<Props> = (props) => {
 
   const [ skip, setSkip ] = React.useState(0);
   const [ limit, setLimit ] = React.useState(5);
+  console.log([skip, limit]);
   const [ nextSearch, setNextSearch ] = React.useState('');
   let [ search, setSearch ] = React.useState('');
   setSearch = debounce(setSearch, 500);
@@ -163,10 +165,10 @@ export const ClaimsList: React.FC<Props> = (props) => {
             </TableHead>
             <TableBody>
               {result.data.claims.map((claim:any) => (
-                <TableRow key={claim.name + ":" + claim.dnsName + ":" + claim.owner}>
+                <TableRow key={claim.name + ":" + claim.dnsName + ":" + claim.owner + ":" + claim.email}>
                   <TableCell>{claim.name}.eth</TableCell>
                   <TableCell>{claim.dnsName}</TableCell>
-                  <TableCell>{new Date(claim.submittedAt * 1000).toLocaleDateString()}</TableCell>
+                  <TableCell title={"Submitted by " + claim.email}>{new Date(claim.submittedAt * 1000).toLocaleDateString()}</TableCell>
                   <TableCell><Link href={exploreUrl + claim.owner}>{claim.owner.slice(0, 6) + '…' + claim.owner.slice(38)}</Link></TableCell>
                   <TableCell>{claim.status}</TableCell>
                 </TableRow>

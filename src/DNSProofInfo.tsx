@@ -145,6 +145,10 @@ class DNSProofInfo extends React.Component<Props, State> {
   claimName = (claim?: ClaimData) => async () => {
     if(claim === undefined) return;
 
+    this.setState({
+      claim: undefined,
+    });
+
     // Trigger ethereum.enable
     await this.context.account();
 

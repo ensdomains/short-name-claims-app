@@ -228,7 +228,7 @@ export const ClaimsList: React.FC<Props> = (props) => {
                         <IconButton color="primary" className={classes.button} onClick={setClaimStatus(claim, true)}><CheckIcon/></IconButton>
                         <IconButton color="secondary" className={classes.button} onClick={setClaimStatus(claim, false)}><CloseIcon/></IconButton>
                       </>:<>
-                        <Button variant="contained" color="primary" className={classes.button} disabled={!account || claim.owner.toLowerCase() !== account.toLowerCase() || claim.status == 'WITHDRAWN'} onClick={withdrawClaim(claim)}>Cancel</Button>
+                        <Button variant="contained" color="primary" className={classes.button} disabled={!account || claim.owner.toLowerCase() !== account.toLowerCase() || claim.status === 'WITHDRAWN'} onClick={withdrawClaim(claim)}>Cancel</Button>
                       </>}
                     </TableCell>
                   </TableRow>

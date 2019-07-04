@@ -132,6 +132,7 @@ class App extends React.Component<Props, State> {
           <p>Any DNS domain owner may apply to reserve a short (3-6 character) ENS name ahead of the auction process.</p>
           <h3 className={classes.h3}>How It Works</h3>
           <p>Public applications must reference an existing DNS domain name, and specify the ENS domain they wish to claim. The DNS domain must have been registered prior to May 4, 2019.</p>
+          <p>Applications may be submitted using this application. Note that application information, including your email address, is visible onchain in plain-text. If you are concerned about this, we recommend using a temporary email address.</p>
           <h4 className={classes.h4}>Reservation requests must be received during the reservation process window</h4>
           <p>The reservation process window opens at 00:00UTC 4 July 2019 and closes at 00:00 UTC 4 August 2019.</p>
           <h4 className={classes.h4}>Criteria to Quality for ENS Name Reservation</h4>
@@ -148,7 +149,7 @@ class App extends React.Component<Props, State> {
           </ul>
           <p>Domains being claimed must be 3-6 characters long</p>
           <p>Each application must be accompanied by the fee for a year's registration ($5 in ETH for a 5-6 character name, $160 in ETH for a 4 character name, and $640 in ETH for a 3 character name). </p>
-          <p>Before the public application is submitted, the owner of the DNS domain must create a TXT record on a specific subdomain with a predetermined value to demonstrate their ownership of the DNS domain, to validate the claim.</p>
+          <p>Before the public application is submitted, the owner of the DNS domain must create a TXT record on a specific subdomain with a predetermined value to demonstrate their ownership of the DNS domain, to validate the claim. This record must remain in place at least until the claim is approved, declined, or withdrawn.</p>
           <p>If an application is successful, the claimant is issued the name with 365 days' registration period (this can be extended as desired). If an application is unsuccessful, the fee will be returned to the claimant.</p>
           <h4 className={classes.h4}>The ENS team will review each submission for validity.</h4>
           <p>Because this is a subjective process, we’re inclined to set quite a low bar to prove validity. For example, if the submitted DNS domain is only a domain parking page, we’ll reject the request.</p>

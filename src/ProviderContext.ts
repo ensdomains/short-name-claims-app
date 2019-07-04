@@ -17,7 +17,7 @@ export class ProviderInfo {
   async account() {
     const accounts = await ethereum.enable();
     if(accounts === undefined || accounts === null) {
-      return accounts;
+      return null;
     }
     return accounts[0];
   }

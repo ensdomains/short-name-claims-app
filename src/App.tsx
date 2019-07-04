@@ -7,6 +7,7 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import { ApolloProvider } from 'react-apollo';
+import { abi as nameClaimsABI } from '@ensdomains/ethregistrar/build/contracts/ShortNameClaims.json';
 
 import ClaimForm from './ClaimForm';
 import ClaimsList from './ClaimsList';
@@ -100,6 +101,8 @@ class App extends React.Component<Props, State> {
       );
     }
 
+    const claimer = new ethers.Contract(networkInfo.nameClaimAddress, nameClaimsABI, this.context.provider);
+
     const client = networkInfo.graphql?new ApolloClient({uri: networkInfo.graphql}):null;
 
     return (
@@ -108,13 +111,13 @@ class App extends React.Component<Props, State> {
 
         {client && <ApolloProvider client={client}>
           <Paper className={classes.paper}>
-            <ClaimsList title="All Claims" address={networkInfo.nameClaimAddress} exploreUrl={networkInfo.etherscan} />
+            <ClaimsList title="All Claims" claimer={claimer} exploreUrl={networkInfo.etherscan} />
           </Paper>
         </ApolloProvider>}
 
         <Paper className={classes.paper}>
           <h2 className={classes.h2}>Submit a claim</h2>
-          <ClaimForm address={networkInfo.nameClaimAddress} />
+          <ClaimForm claimer={claimer} />
         </Paper>
 
         <Paper className={classes.paper}>

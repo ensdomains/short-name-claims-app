@@ -7,10 +7,8 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import { encode as encodePacket, decode as decodePacket, Packet, RECURSION_DESIRED } from 'dns-packet';
-import { abi as nameClaimsABI } from '@ensdomains/ethregistrar/build/contracts/ShortNameClaims.json';
 
 import DNSProofInfo from './DNSProofInfo';
-import { ProviderContext } from './ProviderContext';
 
 const NAME_RE = /^([^.]{3,6}\.[^.]+|[^.]{3,6}eth\.[^.]+|[^.]{1,4}\.[^.]{2}|[^.]{1,3}\.[^.]{3}|[^.]{1,2}\.[^.]{4}|[^.]{1}\.[^.]{5})$/;
 const EMAIL_RE = /^[^@]+@[^.]+\..+$/;
@@ -71,14 +69,10 @@ interface State {
 }
 
 interface Props extends WithStyles<typeof styles> {
-  address: string;
+  claimer: ethers.Contract;
 }
 
 class ClaimForm extends React.Component<Props, State> {
-  claimer?: ethers.Contract;
-
-  static contextType = ProviderContext;
-
   constructor(props: Props) {
     super(props);
 
@@ -87,10 +81,6 @@ class ClaimForm extends React.Component<Props, State> {
       email: '',
       status: Status.Initial,
     }
-  }
-
-  async componentDidMount() {
-    this.claimer = new ethers.Contract(this.props.address, nameClaimsABI, this.context.provider);
   }
 
   handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +96,6 @@ class ClaimForm extends React.Component<Props, State> {
   }
 
   doCheck = async () => {
-    if(!this.claimer) return;
     this.setState({ status: Status.Loading });
 
     const result = await dnsQuery("TXT", "_ens." + this.state.name);
@@ -166,7 +155,7 @@ class ClaimForm extends React.Component<Props, State> {
           >Clear</Button>
         </Grid>
         {status === Status.Loading && <Grid item xs={12}><CircularProgress className={classes.progress} /></Grid>}
-        {status === Status.Loaded && result && this.claimer && <DNSProofInfo name={name} email={email} claimer={this.claimer} result={result} />}
+        {status === Status.Loaded && result && this.props.claimer && <DNSProofInfo name={name} email={email} claimer={this.props.claimer} result={result} />}
       </Grid>
     );
   }

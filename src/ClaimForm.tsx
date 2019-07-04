@@ -85,7 +85,7 @@ class ClaimForm extends React.Component<Props, State> {
 
   handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if(event.target.id === 'email') {
-      this.setState({ email: event.target.value, status: Status.Initial });
+      this.setState({ email: event.target.value.toLowerCase(), status: Status.Initial });
     } else if(event.target.id === 'name') {
       this.setState({ name: event.target.value, status: Status.Initial });
     }

@@ -26,8 +26,6 @@ import React from 'react';
 
 import { ProviderContext } from './ProviderContext';
 
-const ADDRESS_RE = /^0x[0-9a-fA-F]{40}$/;
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -110,10 +108,10 @@ const query = gql`
   }
 `;
 
-const statuses = ['PENDING', 'APPROVED', 'DECLINED', 'WITHDRAWN'];
-
 interface Claims_filter {
   name_starts_with?: string;
+  dnsName_starts_with?: string;
+  email?: string;
   owner?: string;
   status?: string;
 }
@@ -138,7 +136,7 @@ export const ClaimsList: React.FC<Props> = (props) => {
   let [ account, setAccount ] = React.useState(undefined as string|null|undefined);
   let [ message, setMessage ] = React.useState(undefined as string|undefined);
   let [ search, setSearch ] = React.useState('');
-  setSearch = debounce(setSearch, 500);
+  setSearch = debounce(setSearch, 1000);
 
   function searchChanged(e: React.ChangeEvent<HTMLInputElement>) {
     setNextSearch(e.target.value);
@@ -154,12 +152,29 @@ export const ClaimsList: React.FC<Props> = (props) => {
   }
 
   let filter: Claims_filter = {};
-  if(ADDRESS_RE.test(search)) {
-    filter.owner = search;
-  } else if(statuses.includes(search.toUpperCase())) {
-    filter.status = search.toUpperCase();
-  } else {
-    filter.name_starts_with = search;
+  for(let term of search.split(' ')) {
+    if(term.includes(':')) {
+      const [kind, value] = term.split(':', 2);
+      switch(kind) {
+      case 'owner':
+        filter.owner = value;
+        break;
+      case 'email':
+        filter.email = value;
+        break;
+      case 'status':
+        filter.status = value.toUpperCase();
+        break;
+      case 'dnsname':
+        filter.dnsName_starts_with = value;
+        break;
+      case 'name':
+        filter.name_starts_with = value;
+        break;
+      }
+    } else {
+      filter.name_starts_with = search;
+    }
   }
 
   return <ProviderContext.Consumer>{(context) => {

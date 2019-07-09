@@ -15,9 +15,14 @@ import './App.css';
 import { ProviderContext } from './ProviderContext';
 
 const networks : {[key: string]: {nameClaimAddress: string, graphql?: string, etherscan: string}} = {
+  1: { // Mainnet
+    nameClaimAddress: '0xf7c83bd0c50e7a72b55a39fe0dabf5e3a330d749',
+    graphql: 'https://api.thegraph.com/subgraphs/name/ensdomains/shortnameclaims',
+    etherscan: 'https://ropsten.etherscan.io/address/',
+  },
   3: { // Ropsten
     nameClaimAddress: '0x178dc714ac0121577d025a0cf4dcd396f4f08ec3',
-    graphql: 'https://api.thegraph.com/subgraphs/name/ensdomains/shortnameclaims',
+    graphql: 'https://api.thegraph.com/subgraphs/name/ensdomains/shortnameclaimsropsten',
     etherscan: 'https://ropsten.etherscan.io/address/',
   },
   1558996169577: {
@@ -94,7 +99,7 @@ class App extends React.Component<Props, State> {
             <Typography variant="h2" component="h1">Network Not Supported</Typography>
             <Typography variant="body1">
               The network your browser is connected to is not supported. Please
-              connect to a supported network.
+              connect to Ropsten or Mainnet.
             </Typography>
           </Paper>
         </Container>
@@ -158,6 +163,8 @@ class App extends React.Component<Props, State> {
           <h4 className={classes.h4}>The submission that can demonstrate its been operating the longest wins.</h4>
           <p>If multiple valid claims are received for the same ENS domain, the project that can demonstrate it’s been operating the longest among the claimants, will be awarded the ENS name.</p>
           <p>All claims are decided based on the sole discretion of the ENS team. Decisions are final.</p>
+          <p>The ENS team reserves the right to make individual exceptions to these rules - for example, to approve a name for a widely known project that lacks a matching DNS domain.</p>
+          <p>Inquiries and requests for special consideration can be submitted by email to reserve@ens.domains.</p>
         </Paper>
       </Container>
     );

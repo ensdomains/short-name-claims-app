@@ -183,12 +183,14 @@ export const ClaimsList: React.FC<Props> = (props) => {
     }
 
     let setClaimStatus = (claim: Claim, approved: boolean) => async () => {
+      if(!(context.provider instanceof ethers.providers.JsonRpcProvider)) return;
       const writeClaimer = claimer.connect(context.provider.getSigner());
       const tx = await writeClaimer.setClaimStatus(claim.id, approved);
       processTx(tx);
     }
 
     let withdrawClaim = (claim: Claim) => async () => {
+      if(!(context.provider instanceof ethers.providers.JsonRpcProvider)) return;
       const writeClaimer = claimer.connect(context.provider.getSigner());
       const tx = await writeClaimer.withdrawClaim(claim.id);
       processTx(tx);

@@ -120,10 +120,10 @@ class App extends React.Component<Props, State> {
           </Paper>
         </ApolloProvider>}
 
-        <Paper className={classes.paper}>
+        {(this.context.provider instanceof ethers.providers.JsonRpcProvider) && <Paper className={classes.paper}>
           <h2 className={classes.h2}>Submit a claim</h2>
           <ClaimForm claimer={claimer} />
-        </Paper>
+        </Paper>}
 
         <Paper className={classes.paper}>
           <h2 className={classes.h2}>About</h2>

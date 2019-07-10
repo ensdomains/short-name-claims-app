@@ -18,7 +18,7 @@ const networks : {[key: string]: {nameClaimAddress: string, graphql?: string, et
   1: { // Mainnet
     nameClaimAddress: '0xf7c83bd0c50e7a72b55a39fe0dabf5e3a330d749',
     graphql: 'https://api.thegraph.com/subgraphs/name/ensdomains/shortnameclaims',
-    etherscan: 'https://etherscan.io/address/',
+    etherscan: 'https://ropsten.etherscan.io/address/',
   },
   3: { // Ropsten
     nameClaimAddress: '0x178dc714ac0121577d025a0cf4dcd396f4f08ec3',
@@ -139,7 +139,7 @@ class App extends React.Component<Props, State> {
           <p>Public applications must reference an existing DNS domain name, and specify the ENS domain they wish to claim. The DNS domain must have been registered prior to May 4, 2019.</p>
           <p>Applications may be submitted using this application. Note that application information, including your email address, is visible onchain in plain-text. If you are concerned about this, we recommend using a temporary email address.</p>
           <h4 className={classes.h4}>Reservation requests must be received during the reservation process window</h4>
-          <p>The reservation process window opens at 00:00UTC 4 July 2019 and closes at 00:00 UTC 4 August 2019.</p>
+          <p>The reservation process window opens at 00:00UTC 11 July 2019 and closes at 00:00 UTC 10 August 2019.</p>
           <h4 className={classes.h4}>Criteria to Quality for ENS Name Reservation</h4>
           <p>To qualify, the domain being used to support the claim must meet the following criteria:</p>
           <ul>

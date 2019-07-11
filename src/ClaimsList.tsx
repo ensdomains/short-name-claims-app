@@ -236,7 +236,7 @@ export const ClaimsList: React.FC<Props> = (props) => {
                 {result.data.claims.map((claim:Claim) => (
                   <TableRow key={claim.name + ":" + claim.dnsName + ":" + claim.owner + ":" + claim.email}>
                     <TableCell>{claim.name}.eth</TableCell>
-                    <TableCell>{claim.dnsName}</TableCell>
+                    <TableCell><Link href={"https://" + claim.dnsName + "/"}>{claim.dnsName}</Link></TableCell>
                     <TableCell title={"Submitted by " + claim.email}>{new Date(claim.submittedAt * 1000).toLocaleDateString()}</TableCell>
                     <TableCell><Link href={exploreUrl + claim.owner}>{claim.owner.slice(0, 6) + '…' + claim.owner.slice(38)}</Link></TableCell>
                     <TableCell>{claim.status}</TableCell>

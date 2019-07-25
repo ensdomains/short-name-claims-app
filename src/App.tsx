@@ -18,7 +18,7 @@ const networks : {[key: string]: {nameClaimAddress: string, graphql?: string, et
   1: { // Mainnet
     nameClaimAddress: '0xf7c83bd0c50e7a72b55a39fe0dabf5e3a330d749',
     graphql: 'https://api.thegraph.com/subgraphs/name/ensdomains/shortnameclaims',
-    etherscan: 'https://ropsten.etherscan.io/address/',
+    etherscan: 'https://etherscan.io/address/',
   },
   3: { // Ropsten
     nameClaimAddress: '0x178dc714ac0121577d025a0cf4dcd396f4f08ec3',

@@ -120,10 +120,14 @@ class App extends React.Component<Props, State> {
           </Paper>
         </ApolloProvider>}
 
-        {(this.context.provider instanceof ethers.providers.JsonRpcProvider) && <Paper className={classes.paper}>
+        <Paper className={classes.paper}>
           <h2 className={classes.h2}>Submit a claim</h2>
-          <ClaimForm claimer={claimer} />
-        </Paper>}
+          <p>The claims process is now closed.</p>
+        </Paper>
+        // {(this.context.provider instanceof ethers.providers.JsonRpcProvider) && <Paper className={classes.paper}>
+        //   <h2 className={classes.h2}>Submit a claim</h2>
+        //   <ClaimForm claimer={claimer} />
+        // </Paper>}
 
         <Paper className={classes.paper}>
           <h2 className={classes.h2}>About</h2>
@@ -139,7 +143,7 @@ class App extends React.Component<Props, State> {
           <p>Public applications must reference an existing DNS domain name, and specify the ENS domain they wish to claim. The DNS domain must have been registered prior to May 4, 2019.</p>
           <p>Applications may be submitted using this application. Note that application information, including your email address, is visible onchain in plain-text. If you are concerned about this, we recommend using a temporary email address.</p>
           <h4 className={classes.h4}>Reservation requests must be received during the reservation process window</h4>
-          <p>The reservation process window opens at 00:00UTC 11 July 2019 and closes at 00:00 UTC 10 August 2019.</p>
+          <p>The reservation process window opened at 00:00UTC 11 July 2019 and closed at 00:00 UTC 17 August 2019.</p>
           <h4 className={classes.h4}>Criteria to Quality for ENS Name Reservation</h4>
           <p>To qualify, the domain being used to support the claim must meet the following criteria:</p>
           <ul>

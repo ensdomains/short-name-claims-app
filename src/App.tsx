@@ -124,10 +124,6 @@ class App extends React.Component<Props, State> {
           <h2 className={classes.h2}>Submit a claim</h2>
           <p>The claims process is now closed.</p>
         </Paper>
-        // {(this.context.provider instanceof ethers.providers.JsonRpcProvider) && <Paper className={classes.paper}>
-        //   <h2 className={classes.h2}>Submit a claim</h2>
-        //   <ClaimForm claimer={claimer} />
-        // </Paper>}
 
         <Paper className={classes.paper}>
           <h2 className={classes.h2}>About</h2>
